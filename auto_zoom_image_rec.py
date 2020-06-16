@@ -1,5 +1,14 @@
 # automatic joining zoom script
 
+# TODO:
+"""
+
+fix the pre-join camera off image search
+optimize pre-join camera off image search time
+perfect the time for meeting detection while loop
+
+"""
+
 import pyautogui
 import time
 import pyperclip
@@ -15,7 +24,7 @@ if meeting_ID == 'calc':
     meeting_name = 'calculus'
 
 # getting password
-is_password = input('is there a password to this meeting (y / n)?: ')
+is_password = input('is there a password to the meeting (y / n)?: ')
 password = ''
 if is_password == 'y':
     password = input('enter the password to the meeting: ')
@@ -43,7 +52,7 @@ pyautogui.hotkey('enter')
 
 # join a meeting button
 while True:
-    pyautogui.screenshot(region=(360, 80, 1200, 900))
+    pyautogui.screenshot()
     join_button = pyautogui.locateCenterOnScreen('join_button.png')
     if join_button is not None:
         x, y = pyautogui.locateCenterOnScreen('join_button.png')
@@ -54,28 +63,17 @@ while True:
 # enter meeting id
 pyautogui.typewrite(meeting_ID, interval=0.05)
 
-# turn off camera pre join
+# turn off camera pre-join
 if is_password == 'n':
     pyautogui.screenshot(region=(700, 280, 300, 300))
     x, y = pyautogui.locateCenterOnScreen('pre_join_cam_off.png')
     time.sleep(1)
 
 # join meeting
-pyautogui.screenshot(region=(700, 280, 300, 300))
+pyautogui.screenshot(region=(350, 140, 1555, 920))
 x, y = pyautogui.locateCenterOnScreen('join_meeting_button.png')
 pyautogui.click(x, y)
-
-# check if joined
-while True:
-    pyautogui.screenshot()
-    in_meeting = pyautogui.locateOnScreen('leave_button.png')
-    if in_meeting:
-        print('meeting detected')
-        print('welcome to your {} meeting'.format(meeting_name))
-        exit()
-    if in_meeting is None:
-        print('no meeting detected yet')
-        break
+time.sleep(1.5)
 
 # entering password
 if is_password == 'y':
@@ -88,32 +86,44 @@ if is_password == 'y':
 
 # join with camera prompt
 while True:
-    pyautogui.screenshot()
+    pyautogui.screenshot(region=(350, 140, 1555, 920))
     join_without_video_button = pyautogui.locateCenterOnScreen('join_without_video_button.png')
     if join_without_video_button is not None:
-        pyautogui.screenshot(region=(360, 80, 1200, 900))
+        pyautogui.screenshot(region=(350, 140, 1555, 920))
         x, y = pyautogui.locateCenterOnScreen('join_without_video_button.png')
         pyautogui.click(x, y)
         break
 
-# microphone
-while True:
+# check if joined
+i = 0
+while i < 30:
     pyautogui.screenshot()
-    unmuted_microphone = pyautogui.locateCenterOnScreen('unmuted_microphone.png')
-    if unmuted_microphone is not None:
-        x, y = pyautogui.locateCenterOnScreen('unmuted_microphone.png')
-        pyautogui.click(x, y)
-        break
+    in_meeting = pyautogui.locateOnScreen('leave_button.png')
+    if in_meeting:
+        print('meeting detected')
+        # microphone
+        while True:
+            pyautogui.screenshot()
+            unmuted_microphone = pyautogui.locateCenterOnScreen('unmuted_microphone.png')
+            if unmuted_microphone is not None:
+                x, y = pyautogui.locateCenterOnScreen('unmuted_microphone.png')
+                pyautogui.click(x, y)
+                break
 
-# full screen
-while True:
-    pyautogui.moveRel(50, 0, duration=1)
-    pyautogui.screenshot()
-    full_screen_button = pyautogui.locateCenterOnScreen('full_screen_button.png')
-    if full_screen_button is not None:
-        x, y = pyautogui.locateCenterOnScreen('full_screen_button.png')
-        pyautogui.click(x, y)
-        break
+        # full screen
+        while True:
+            pyautogui.moveRel(50, 0, duration=1)
+            pyautogui.screenshot()
+            full_screen_button = pyautogui.locateCenterOnScreen('full_screen_button.png')
+            if full_screen_button is not None:
+                x, y = pyautogui.locateCenterOnScreen('full_screen_button.png')
+                pyautogui.click(x, y)
+                break
 
-# all done message for password
-print('welcome to your {} meeting'.format(meeting_name))
+        # all done message for password
+        print('welcome to your {} meeting'.format(meeting_name))
+        exit()
+    if in_meeting is None:
+        print('no meeting detected yet')
+        print('{} checks for meeting'.format(i))
+        i += 1
