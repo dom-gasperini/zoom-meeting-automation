@@ -12,6 +12,7 @@ perfect the time for meeting detection while loop
 import pyautogui
 import time
 import pyperclip
+import platform
 
 # getting meeting id
 meeting_ID = input('meeting id / class name / clipboard: ')
@@ -30,9 +31,19 @@ if is_password == 'y':
     password = input('enter the password to the meeting: ')
 
 # determine os
-os = input('which operating system are you using (windows / mac)?: ')
+plt = platform.system()
+os = 'unknown'
+if plt == "Windows":
+    print("looks like you're running Windows")
+    os = 'windows'
+elif plt == "Darwin":
+    print("looks like you're running MacOS")
+    os = 'mac'
+else:
+    print("Unidentified system")
+    exit()
 
-# automation
+# automation start delay
 time.sleep(1)
 
 # search for zoom
@@ -96,7 +107,7 @@ while True:
 
 # check if joined
 i = 0
-while i < 30:
+for i in range(0, 46):
     pyautogui.screenshot()
     in_meeting = pyautogui.locateOnScreen('leave_button.png')
     if in_meeting:
@@ -111,7 +122,7 @@ while i < 30:
                 break
 
         # full screen
-        while True:
+        for j in range(0, 6):
             pyautogui.moveRel(50, 0, duration=1)
             pyautogui.screenshot()
             full_screen_button = pyautogui.locateCenterOnScreen('full_screen_button.png')
