@@ -1,20 +1,12 @@
-# automatic joining zoom script
-
-# TODO:
-"""
-
-fix the pre-join camera off image search
-optimize pre-join camera off image search time
-perfect the time for meeting detection while loop
-
-"""
+# automatic zoom call join script
 
 import pyautogui
 import time
 import pyperclip
 import platform
+import datetime
 
-# getting meeting id
+# getting the meeting id
 meeting_ID = input('meeting id / class name / clipboard: ')
 meeting_name = 'zoom'
 if meeting_ID == 'clipboard':
@@ -24,45 +16,44 @@ if meeting_ID == 'calc':
     meeting_ID = '951-444-09514'
     meeting_name = 'calculus'
 
-# getting password
+# getting the meeting password
 is_password = input('is there a password to the meeting (y / n)?: ')
 password = ''
 if is_password == 'y':
     password = input('enter the password to the meeting: ')
 
-# determine os
-plt = platform.system()
-os = 'unknown'
-if plt == "Windows":
-    print("looks like you're running Windows")
-    os = 'windows'
-elif plt == "Darwin":
-    print("looks like you're running MacOS")
-    os = 'mac'
+# determine user os
+os = platform.system()
+if os == "Windows":
+    print("looks like you're running on Windows")
+elif os == "Darwin":
+    print("looks like you're running on MacOS")
 else:
-    print("Unidentified system")
+    print("Unidentified operating system, the program cannot continue to run")
+    time.sleep(0.5)
+    print('exiting now')
     exit()
 
 # automation start delay
 time.sleep(1)
 
-# search for zoom
-if os == 'mac':
+# pressing search hot key
+if os == 'Darwin':
     pyautogui.hotkey('command', 'space')
     time.sleep(0.75)
-if os == 'windows':
+if os == 'Windows':
     pyautogui.hotkey('win')
     time.sleep(0.75)
 
-# type zoom
+# typing zoom
 pyautogui.typewrite('Zoom', interval=0.05)
 time.sleep(1)
 
-# open zoom
+# opening zoom
 pyautogui.hotkey('enter')
 
-# join a meeting button
-while True:
+# find and click the join a meeting button
+for i in range(30):
     pyautogui.screenshot()
     join_button = pyautogui.locateCenterOnScreen('join_button.png')
     if join_button is not None:
@@ -71,58 +62,60 @@ while True:
         time.sleep(1)
         break
 
-# enter meeting id
+# entering the meeting id
+time.sleep(0.5)
 pyautogui.typewrite(meeting_ID, interval=0.05)
 
-# turn off camera pre-join
+# find and select the turn off camera pre-join
 if is_password == 'n':
-    pyautogui.screenshot(region=(700, 280, 300, 300))
+    pyautogui.screenshot()  # region=(700, 280, 300, 300)
     x, y = pyautogui.locateCenterOnScreen('pre_join_cam_off.png')
     time.sleep(1)
 
-# join meeting
-pyautogui.screenshot(region=(350, 140, 1555, 920))
-x, y = pyautogui.locateCenterOnScreen('join_meeting_button.png')
-pyautogui.click(x, y)
-time.sleep(1.5)
+# find and select the join meeting
+for i in range(30):
+    pyautogui.screenshot()  # region=(350, 140, 1555, 920)
+    join_meeting_button = pyautogui.locateCenterOnScreen('join_meeting_button.png')
+    if join_meeting_button is not None:
+        x, y = pyautogui.locateCenterOnScreen('join_meeting_button.png')
+        pyautogui.click(x, y)
+        time.sleep(1.5)
+        break
 
-# entering password
+# entering the meeting password
 if is_password == 'y':
     pyautogui.typewrite(password, interval=0.05)
 
-# join with password
-if is_password == 'y':
+    # join with password
     x, y = pyautogui.locateCenterOnScreen('join_with_password_button.png')
     pyautogui.click(x, y)
 
-# join with camera prompt
-while True:
-    pyautogui.screenshot(region=(350, 140, 1555, 920))
+# find and click the join with camera prompt
+for i in range(30):
+    pyautogui.screenshot()  # region=(350, 140, 1555, 920)
     join_without_video_button = pyautogui.locateCenterOnScreen('join_without_video_button.png')
     if join_without_video_button is not None:
-        pyautogui.screenshot(region=(350, 140, 1555, 920))
+        pyautogui.screenshot()  # region=(350, 140, 1555, 920)
         x, y = pyautogui.locateCenterOnScreen('join_without_video_button.png')
         pyautogui.click(x, y)
         break
 
-# check if joined
-i = 0
-for i in range(0, 46):
+# check if user has joined the meeting
+for i in range(45):
     pyautogui.screenshot()
     in_meeting = pyautogui.locateOnScreen('leave_button.png')
     if in_meeting:
         print('meeting detected')
         # microphone
-        while True:
+        for z in range(30):
             pyautogui.screenshot()
             unmuted_microphone = pyautogui.locateCenterOnScreen('unmuted_microphone.png')
             if unmuted_microphone is not None:
                 x, y = pyautogui.locateCenterOnScreen('unmuted_microphone.png')
                 pyautogui.click(x, y)
                 break
-
-        # full screen
-        for j in range(0, 6):
+        # find and select the full screen button
+        for j in range(3):
             pyautogui.moveRel(50, 0, duration=1)
             pyautogui.screenshot()
             full_screen_button = pyautogui.locateCenterOnScreen('full_screen_button.png')
@@ -130,11 +123,39 @@ for i in range(0, 46):
                 x, y = pyautogui.locateCenterOnScreen('full_screen_button.png')
                 pyautogui.click(x, y)
                 break
-
-        # all done message for password
+        # all done message for joined meeting
         print('welcome to your {} meeting'.format(meeting_name))
-        exit()
+        exit()  # remove when breakout room shit is done!!!
     if in_meeting is None:
         print('no meeting detected yet')
-        print('{} checks for meeting'.format(i))
-        i += 1
+        if i > 1:
+            print('{} checks for a meeting'.format(i))
+        if i == 1:
+            print('{} check for a meeting'.format(i))
+        # failed to find a meeting message
+        if i == 45:
+            print('failed to find a meeting after {} checks, exiting the program now'.format(i))
+
+# entering and exiting breakout rooms mid-meeting
+while True:
+    pyautogui.screenshot()
+    breakout_room_join_button = pyautogui.locateCenterOnScreen('breakout_room_join_button.png')
+    if breakout_room_join_button is not None:
+        x, y = pyautogui.locateCenterOnScreen('breakout_room_join_button')
+        pyautogui.click(x, y)
+        break
+while True:
+    pyautogui.screenshot()
+    breakout_room_join_button = pyautogui.locateCenterOnScreen('breakout_room_return_to_main_button.jpg')
+    if breakout_room_join_button is not None:
+        x, y = pyautogui.locateCenterOnScreen('breakout_room_return_to_main_button.jpg')
+        pyautogui.click(x, y)
+        break
+
+'''
+# auto log out of the meeting
+while True:
+    end_time = datetime.time
+    now = datetime.datetime.now()
+    if now ==
+'''
