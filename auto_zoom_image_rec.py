@@ -32,9 +32,8 @@ if os == "Windows":
 elif os == "Darwin":
     print("looks like you're running on MacOS")
 else:
-    print("Unidentified operating system, the program cannot continue to run")
+    print("Unidentified operating system, the program cannot continue to run \nexiting now")
     time.sleep(0.5)
-    print('exiting now')
     exit()
 
 # automation start delay
@@ -141,17 +140,22 @@ for i in range(45):
 
 seconds = 0
 while seconds < meeting_length:
-    # entering and exiting breakout rooms mid-meeting
+    # entering breakout rooms mid-meeting
     while True:
         pyautogui.screenshot()
         breakout_room_join_button = pyautogui.locateCenterOnScreen('breakout_room_join_button.png')
-        if breakout_room_join_button is not None:
-            x, y = pyautogui.locateCenterOnScreen('breakout_room_join_button')
+        breakout_room_join_button_new = pyautogui.locateCenterOnScreen('breakout_room_join_button_new.png')
+        if breakout_room_join_button or breakout_room_join_button_new is not None:
+            try:
+                x, y = pyautogui.locateCenterOnScreen('breakout_room_join_button.png')
+            except None:
+                x, y = pyautogui.locateCenterOnScreen('breakout_room_join_button_new.png')
             pyautogui.click(x, y)
             break
+    # exiting breakout rooms mid-meeting
     while True:
         pyautogui.screenshot()
-        breakout_room_join_button = pyautogui.locateCenterOnScreen('breakout_room_return_to_main_button.jpg')
+        breakout_room_join_button = pyautogui.locateCenterOnScreen('breakout_room_return_to_main_button.')
         if breakout_room_join_button is not None:
             x, y = pyautogui.locateCenterOnScreen('breakout_room_return_to_main_button.jpg')
             pyautogui.click(x, y)
@@ -164,17 +168,17 @@ while seconds < meeting_length:
 for i in range(30):
     pyautogui.moveRel(50, 0, duration=1)
     pyautogui.screenshot()
-    leave_meeting_button = pyautogui.locateCenterOnScreen('leave_meeting_button')
+    leave_meeting_button = pyautogui.locateCenterOnScreen('leave_button.png')
     if leave_meeting_button is not None:
-        x, y = pyautogui.locateCenterOnScreen('')
+        x, y = pyautogui.locateCenterOnScreen('leave_button.png')
         pyautogui.click(x, y)
         for j in range(30):
             pyautogui.screenshot()
-            actually_leave_meeting_button = pyautogui.locateCenterOnScreen('')
+            actually_leave_meeting_button = pyautogui.locateCenterOnScreen('actually_leave_meeting_button.png')
             if actually_leave_meeting_button is not None:
                 x, y = pyautogui.locateCenterOnScreen('actually_leave_meeting_button.png')
                 pyautogui.click(x, y)
                 break
         break
-        
-print('automatically logged out of the meeting after 3 hours \n have a nice day!')
+
+print('automatically logged out of the meeting after 3 hours \nhave a nice day!')
