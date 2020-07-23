@@ -45,7 +45,6 @@ def get_os():
         print("Unidentified operating system, the program cannot continue to run \nexiting now")
         time.sleep(0.5)
         exit()
-    return os
 
 
 def search_via_command_key():
@@ -62,9 +61,7 @@ def join():
         pyautogui.screenshot()
         join_button = pyautogui.locateCenterOnScreen('join_button.png')
         if not join_button:
-            join_attempts = 1
-            print('{} failed attempts to find the join button'.format(join_attempts))
-            join_attempts += 1
+            print('{} failed attempts to find the join button'.format(i))
         if join_button is not None:
             x, y = pyautogui.locateCenterOnScreen('join_button.png')
             pyautogui.click(x, y)
@@ -78,19 +75,21 @@ def join():
 def join_with_password():
     if get_password.is_password == 'y':
         pyautogui.typewrite(get_password.is_password, interval=0.05)
-        # join with the password
-        x, y = pyautogui.locateCenterOnScreen('join_with_password_button.png')
-        pyautogui.click(x, y)
+        for i in range(1, 31):
+            pyautogui.screenshot()
+            join_with_password_button = pyautogui.locateCenterOnScreen('join_with_password_button.png')
+            if join_with_password_button is not None:
+                x, y = pyautogui.locateCenterOnScreen('join_with_password_button.png')
+                pyautogui.click(x, y)
 
 
 def pre_join_camera():
     if get_password.is_password == 'n':
         for i in range(1, 31):
-            pyautogui.screenshot()  # region=(700, 280, 300, 300)
+            pyautogui.screenshot()
             pre_join_camera_button = pyautogui.locateCenterOnScreen('pre_join_cam_off.png')
             if not pre_join_camera_button:
-                join_meeting_attempts = 1
-                print('{} failed attempts to find the join meeting button'.format(join_meeting_attempts))
+                print('{} failed attempts to find the join meeting button'.format(i))
             if pre_join_camera_button is not None:
                 x, y = pyautogui.locateCenterOnScreen('join_meeting_button.png')
                 pyautogui.click(x, y)
@@ -107,9 +106,7 @@ def join_meeting():
         pyautogui.screenshot()  # region=(350, 140, 1555, 920)
         join_meeting_button = pyautogui.locateCenterOnScreen('join_meeting_button.png')
         if not join_meeting_button:
-            join_meeting_attempts = 1
-            print('{} failed attempts to find the join meeting button'.format(join_meeting_attempts))
-            join_meeting_attempts += 1
+            print('{} failed attempts to find the join meeting button'.format(i))
         if join_meeting_button is not None:
             x, y = pyautogui.locateCenterOnScreen('join_meeting_button.png')
             pyautogui.click(x, y)
@@ -125,9 +122,7 @@ def join_without_video():
         pyautogui.screenshot()  # region=(350, 140, 1555, 920)
         join_without_video_button = pyautogui.locateCenterOnScreen('join_without_video_button.png')
         if not join_without_video_button:
-            join_without_video_attempts = 1
-            print('{} failed attempts to find the join without video button'.format(join_without_video_attempts))
-            join_without_video_attempts += 1
+            print('{} failed attempts to find the join without video button'.format(i))
         if join_without_video_button is not None:
             pyautogui.screenshot()  # region=(350, 140, 1555, 920)
             x, y = pyautogui.locateCenterOnScreen('join_without_video_button.png')
@@ -160,9 +155,7 @@ def microphone():
         pyautogui.screenshot()
         unmuted_microphone = pyautogui.locateCenterOnScreen('unmuted_microphone.png')
         if not unmuted_microphone:
-            microphone_attempts = 1
-            print('{} failed attempts to find the mute microphone button'.format(microphone_attempts))
-            microphone_attempts += 1
+            print('{} failed attempts to find the mute microphone button'.format(i))
         if unmuted_microphone is not None:
             x, y = pyautogui.locateCenterOnScreen('unmuted_microphone.png')
             pyautogui.click(x, y)
@@ -178,9 +171,7 @@ def full_screen():
         pyautogui.screenshot()
         full_screen_button = pyautogui.locateCenterOnScreen('full_screen_button.png')
         if not full_screen_button:
-            full_screen_attempts = 1
-            print('{} failed attempts to find the full screen button'.format(full_screen_attempts))
-            full_screen_attempts += 1
+            print('{} failed attempts to find the full screen button'.format(i))
         if full_screen_button is not None:
             x, y = pyautogui.locateCenterOnScreen('full_screen_button.png')
             pyautogui.click(x, y)
@@ -191,12 +182,12 @@ def full_screen():
 
 
 def join_breakout():
+    join_breakout_attempts = 0
     while True:
         pyautogui.screenshot()
         breakout_room_join_button = pyautogui.locateCenterOnScreen('breakout_room_join_button.png')
         breakout_room_join_button_new = pyautogui.locateCenterOnScreen('breakout_room_join_button_new.png')
         if not breakout_room_join_button:
-            join_breakout_attempts = 1
             print('{} attempts to find the join breakout room button'.format(join_breakout_attempts))
             join_breakout_attempts += 1
             time.sleep(15)
@@ -210,11 +201,11 @@ def join_breakout():
 
 
 def leave_breakout():
+    leave_breakout_attempts = 0
     while True:
         pyautogui.screenshot()
         breakout_room_return_to_main_button = pyautogui.locateCenterOnScreen('breakout_room_return_to_main_button.jpg')
         if not breakout_room_return_to_main_button:
-            leave_breakout_attempts = 1
             print('{} attempts to find the leave breakout room button'.format(leave_breakout_attempts))
             leave_breakout_attempts += 1
             time.sleep(15)
